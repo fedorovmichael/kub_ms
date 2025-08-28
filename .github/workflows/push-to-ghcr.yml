@@ -91,12 +91,6 @@ jobs:
           ls -la
           ls -la k8s
 
-      - name: Preflight auth
-        run: |
-          kubectl config view --minify
-          kubectl version --short
-          kubectl auth can-i list deployments -n "$NS" || true
-
       
       - name: apply app manifests
         run: |
