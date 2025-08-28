@@ -68,8 +68,11 @@ jobs:
       REGISTRY: ghcr.io
       OWNER: ${{ github.repository_owner }}
       REPO:  ${{ github.event.repository.name }}
-
+        
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        
       - name: Install kubectl
         uses: azure/setup-kubectl@v4
         with:
