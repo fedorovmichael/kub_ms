@@ -90,10 +90,18 @@ jobs:
           pwd
           ls -la
           ls -la k8s
+      - name: Upsert gateway Secret from GitHub Secret
+        run: |
+          kubectl -n "$NS" create secret generic gateway-secrets \
+            --from-literal=USER1_PASSWORD="${USER1_PASSWORD}" \
+            --dry-run=client -o yaml | kubectl -n "$NS" apply -f -
+        env:
+          USER1_PASSWORD: ${{ secrets.USER1_PASSWORD }}
 
       
       - name: apply app manifests
         run: |
+          kubectl apply -f k8s/gateway-config.yaml
           kubectl apply -f k8s/gateway.yaml
           kubectl apply -f k8s/documents.yaml
           kubectl apply -f k8s/payment.yaml
