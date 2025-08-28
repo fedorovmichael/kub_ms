@@ -81,6 +81,12 @@ jobs:
           echo "${KUBECONFIG_CONTENTS}" > ~/.kube/config
         env:
           KUBECONFIG_CONTENTS: ${{ secrets.KUBECONFIG }}
+      
+      - name: apply app manifests
+        run: |
+          kubectl apply -f k8s/gateway.yaml
+          kubectl apply -f k8s/documents.yaml
+          kubectl apply -f k8s/payment.yaml
 
       # Update images to the immutable commit SHA tag
       - name: Rollout gateway
