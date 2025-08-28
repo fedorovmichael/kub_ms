@@ -74,7 +74,7 @@ jobs:
         uses: azure/setup-kubectl@v4
         with:
           version: 'latest'
-          
+
       - name: Set up kubeconfig
         run: |
           mkdir -p ~/.kube
@@ -87,16 +87,13 @@ jobs:
         run: |
           kubectl -n $NS set image deploy/gateway gateway=${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.REPO }}-gateway:${{ github.sha }}
           kubectl -n $NS rollout status deploy/gateway
-        env: { NS: ${{ env.NS }} }
 
       - name: Rollout documents
         run: |
           kubectl -n $NS set image deploy/documents documents=${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.REPO }}-documents:${{ github.sha }}
           kubectl -n $NS rollout status deploy/documents
-        env: { NS: ${{ env.NS }} }
 
       - name: Rollout payment
         run: |
           kubectl -n $NS set image deploy/payment payment=${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.REPO }}-payment:${{ github.sha }}
           kubectl -n $NS rollout status deploy/payment
-        env: { NS: ${{ env.NS }} }
