@@ -1,33 +1,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: documents-deployment
+  name: documents
+  namespace: prod
 spec:
   replicas: 1
   selector:
-    matchLabels:
-      app: documents
+    matchLabels: { app: documents }
   template:
     metadata:
-      labels:
-        app: documents
+      labels: { app: documents }
     spec:
       containers:
-      - name: documents
-        image: documents-image:latest # Replace with your image name
-        ports:
-        - containerPort: 8000
-
+        - name: documents
+          image: ghcr.io/fedorovmichael/kub_ms-documents:main
+          imagePullPolicy: IfNotPresent
+          ports: [{ containerPort: 3000 }]
+          readinessProbe: { tcpSocket: { port: 3000 }, initialDelaySeconds: 3, periodSeconds: 10 }
+          livenessProbe:  { tcpSocket: { port: 3000 }, initialDelaySeconds: 10, periodSeconds: 20 }
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: documents-service
+  name: documents
+  namespace: prod
 spec:
-  selector:
-    app: documents
+  selector: { app: documents }
   ports:
-    - protocol: TCP
-      port: 8000 # Port for internal communication
-      targetPort: 8000
-  type: ClusterIP # Only accessible within the cluster
+    - port: 80
+      targetPort: 3000
+      protocol: TCP

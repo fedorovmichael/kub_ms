@@ -1,33 +1,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: payment-deployment
+  name: payment
+  namespace: prod
 spec:
   replicas: 1
   selector:
-    matchLabels:
-      app: payment
+    matchLabels: { app: payment }
   template:
     metadata:
-      labels:
-        app: payment
+      labels: { app: payment }
     spec:
       containers:
-      - name: payment
-        image: payment-image:latest # Replace with your image name
-        ports:
-        - containerPort: 8000
-
+        - name: payment
+          image: ghcr.io/fedorovmichael/kub_ms-payment:main
+          imagePullPolicy: IfNotPresent
+          ports: [{ containerPort: 3000 }]
+          readinessProbe: { tcpSocket: { port: 3000 }, initialDelaySeconds: 3, periodSeconds: 10 }
+          livenessProbe:  { tcpSocket: { port: 3000 }, initialDelaySeconds: 10, periodSeconds: 20 }
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: payment-service
+  name: payment
+  namespace: prod
 spec:
-  selector:
-    app: payment
+  selector: { app: payment }
   ports:
-    - protocol: TCP
-      port: 8000 # Port for internal communication
-      targetPort: 8000
-  type: ClusterIP # Only accessible within the cluster
+    - port: 80
+      targetPort: 3000
+      protocol: TCP
