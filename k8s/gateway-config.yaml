@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gateway-config
+  namespace: prod
+data:
+  # Use your Service names inside the cluster. Your Services are "payment" and "documents".
+  PAYMENT_SERVICE_URL: "http://payment/pay"
+  DOCUMENTS_SERVICE_URL: "http://documents/documents"
