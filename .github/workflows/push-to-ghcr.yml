@@ -81,6 +81,12 @@ jobs:
           echo "${KUBECONFIG_CONTENTS}" > ~/.kube/config
         env:
           KUBECONFIG_CONTENTS: ${{ secrets.KUBECONFIG }}
+          
+      - name: Debug workspace (optional)
+        run: |
+          pwd
+          ls -la
+          ls -la k8s
       
       - name: apply app manifests
         run: |
